@@ -26,6 +26,8 @@ Use a safe single-player world while testing. Live-control scripts send keyboard
 ## Project Files
 
 ```text
+pipeline_ui.py              Tkinter control panel for running every pipeline stage
+
 valheim_capture.py          Window capture foundation
 valheim_actions.py          Shared keyboard/mouse action definitions
 valheim_control.py          Shared live input helpers
@@ -75,6 +77,25 @@ build
 ```
 
 Older recordings and checkpoints without goal metadata are treated as `general`.
+
+## Pipeline UI
+
+Every stage below can be run from a single Tkinter control panel instead of the command line:
+
+```powershell
+python .\pipeline_ui.py
+```
+
+The window has one tab per pipeline stage. Each tab is a form for that script's options and a Run button that launches it as a subprocess, streaming output into a shared console. The `stdin:` box at the bottom forwards lines to the running process, which is how you answer the interactive `a`/`b`/`t`/`s`/`q` prompt from `compare_rollouts.py`.
+
+Other details:
+
+- Only one stage runs at a time; live-control scripts all need the focused Valheim window, so parallel runs would conflict.
+- The status bar shows current dataset/rollout/preference counts and which models exist. It refreshes after each run, or via the Refresh button.
+- Goal dropdowns are pre-filled with the default goals plus any goal labels found in existing `datasets/` and `rollouts/` metadata.
+- Stop sends a break signal first and force-kills the process if it doesn't exit within a few seconds.
+
+The sections below document the same stages as direct command-line invocations.
 
 ## 1. Confirm Window Capture
 
